@@ -29,21 +29,23 @@ module.exports = {
         return response.json({id});
     },
 
-    async delete(request,response) {
-        const {id} = request.params;
-        const ong_id = request.headers.authorization;
-        
-        const incident = await connection('incidents')
-        .where('id', id)
-        .select('ong_id')
-        .first();
-
-        if(incident.org_id !=+ ong_id) {
-            return response.status(401).json({error:'Operation not permited.'});
+    async delete(req, res) {
+        const { id } = req.params;
+        const ong_id = req.headers.authorization;
+    
+        const incident = await connection("incidents")
+          .where("id", id)
+          .select("ong_id")
+          .first();
+    
+        if (incident.ong_id !== ong_id) {
+          return res.status(401).json({ error: "Operation not permitted" });
         }
-
-        await connection('incidents').where('id', id).delete();
-
-        return response.status(204).send();
+    
+        await connection("incidents")
+          .where("id", id)
+          .delete();
+    
+        return res.status(204).send();
     }
 }
